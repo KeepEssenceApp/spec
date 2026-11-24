@@ -1,0 +1,20 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: The contract is valid OpenAPI 3.1
+        run: npx --yes @redocly/cli@1 lint contract/openapi.yaml --skip-rule operation-4xx-response --skip-rule security-defined --skip-rule tag-description --skip-rule operation-2xx-response --skip-rule no-server-example.com
+      - name: The contract names no product and no assistant brand
+        run: |
+          if grep -inE 'keepessence|claude|chatgpt|gemini|openai|anthropic|muse|scout' contract/openapi.yaml; then
+            echo "The contract must not contain a product name or an assistant's name."; exit 1
+          fi

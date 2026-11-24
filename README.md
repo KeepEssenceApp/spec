@@ -7,6 +7,8 @@ Product spec, API contract and UX mocks for KeepEssence. Every platform builds a
 |---|---|
 | [`product/`](product/README.md) | 产品规格。干活前先读这里，按 README 里的顺序读 |
 | [`contract/`](contract/README.md) | 接口契约，手写的 OpenAPI 3.1，接口的唯一来源 |
+| [`product/acceptance.md`](product/acceptance.md) | v1.0 内测的验收标准 |
+| [`design/tokens.css`](design/tokens.css)、[`design/terms.md`](design/terms.md) | 各客户端共用的颜色、圆角、字号，和界面用词的中英对照 |
 | [`design/mock/`](design/mock/README.md) | 各客户端的 UX mock，浏览器打开 `index.html` 看 |
 
 ## 其他仓库

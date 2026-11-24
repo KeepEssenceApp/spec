@@ -10,15 +10,15 @@ def home(ok=True):
                 '')
     else:
         left = (sbar_wide(False) + f'<div class="card mt12" style="padding:22px 24px"><div class="row"><span class="xs">最近的一份每日摘要</span><span class="sp"></span>{READ}</div>'
-                f'<div class="h1 mt4">每日摘要 · 11月18日 周三</div><p class="mt8 mut">存入了 15 条。3 条值得深读。这是最近的一份。</p>'
+                f'<div class="h1 mt4">每日摘要 · 11月18日 周三</div><p class="mt8 mut">存入了 15 条。3 条值得深挖。这是最近的一份。</p>'
                 f'<div class="row mt16"><span class="btn">读每日摘要</span></div></div>')
     if ok:
         right = (f'<div class="row top" style="margin-bottom:14px"><div class="col sp"><span class="xs">这个月的月历 · 11月</span><span class="sm mt4">存入了 148 条 · 读了 16 份每日摘要 · 留下 5 篇</span><span class="lk xs mt8">打开</span></div>{hive(MONTH, 9)}</div>'
                  f'<div class="card"><div class="row"><span class="xs">今晚的每日摘要</span><span class="sp"></span>{UNREAD}</div>'
-                 f'<div class="h2 mt4">每日摘要 · {DATE}</div><p class="sm mt4">存入了 9 条。2 条值得深读，其余 5 条收在后面。</p>'
+                 f'<div class="h2 mt4">每日摘要 · {DATE}</div><p class="sm mt4">存入了 9 条。2 条值得深挖，其余 5 条收在后面。</p>'
                  f'<div class="row mt12"><span class="btn sm">读每日摘要</span><span class="sp"></span><span class="xs">阿读 · 21:02 汇总</span></div></div>'
-                 f'<div class="lab">深读队列</div>'
-                 + ripen_req(DIG[0], SIPPER, "ready", f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深入对话</span><span class="lk sm">看精读</span></div>')
+                 f'<div class="lab">深挖队列</div>'
+                 + ripen_req(DIG[0], SIPPER, "ready", f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深挖</span><span class="lk sm">看精读</span></div>')
                  + f'<div class="lab">处理过的 · 2 个</div><div class="fold" style="padding:2px 14px">{drop_done(FLOWERS[5], "不感兴趣")}{drop_done(FLOWERS[4], "看过了")}</div>'
                  + f'<div class="lab">还在等助手的条目 · 4 条</div><div class="card"><div class="row"><span>2 条等分派 · 2 条等解读</span><span class="sp"></span>{ic("chev", 16, "faint")}</div>'
                  f'<p class="xs mt4">最早的一条明天删除</p></div>')
@@ -31,20 +31,20 @@ def home(ok=True):
                  + f'<div class="lab">每个助手上一次来</div><div class="card" style="padding:2px 16px">'
                  + bee_row("阿探", "分派助手 · 还在分派", "刚刚来过")
                  + bee_row("阿读", ALL3, "3 天前来过", "bad")
-                 + bee_row("阿深", "深入对话", "5 天前来过", "bad") + '</div>'
+                 + bee_row("阿深", "深挖", "5 天前来过", "bad") + '</div>'
                  f'<div class="row mt12"><span class="btn quiet sm">{ic("gear", 15)}看助手设置</span></div>')
     return f'<div class="pane read" style="padding-right:14px">{left}</div><div class="pane" style="width:390px;flex:none;padding-left:14px">{right}</div>'
 
 
 def classes():
-    more = CLASSES + [("11月12日 周四", "存入了 7 条 · 2 条值得深读", True), ("11月11日 周三", "存入了 9 条 · 2 条值得深读", True)]
+    more = CLASSES + [("11月12日 周四", "存入了 7 条 · 2 条值得深挖", True), ("11月11日 周三", "存入了 9 条 · 2 条值得深挖", True)]
     picks = "".join(f'<div class="pick{" on" if i == 0 else ""}"><div class="row"><b class="serif">每日摘要 · {d}</b><span class="sp"></span>{"" if r else UNREAD}</div>'
                     f'<span class="xs">{s}</span></div>' for i, (d, s, r) in enumerate(more))
     body = (f'<div class="inner"><div class="row"><span class="xs">阿读汇总 · 21:02 · 存入了 9 条</span><span class="sp"></span>'
             f'<span class="btn ghost sm">{ic("dl", 15)}导出</span></div>'
             f'<div class="h1 mt8" style="font-size:30px">每日摘要 · {DATE}</div>'
             f'<p class="sm mt8" style="line-height:1.7;font-size:14px">{SUMMARY}</p>'
-            f'<div class="lab">值得深读的 · 2 条</div>'
+            f'<div class="lab">值得深挖的 · 2 条</div>'
             f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start">{lesson_card(FLOWERS[0])}{lesson_card(FLOWERS[3])}</div>'
             f'<div class="mt16">{lesson_rest(False)}</div>{night()}</div>')
     return f'<div class="pane side">{picks}</div><div class="pane read">{body}</div>'
@@ -85,12 +85,12 @@ def settings_colony(notify_ok=True):
             f'<div class="card mt12" style="padding:2px 16px">'
             + bee_row("阿探", "分派助手 · 我们提供，免费", "刚刚来过", "ok")
             + bee_row("阿读", ALL3, "4 分钟前来过", "ok", rev)
-            + bee_row("阿深", "深入对话", "2 小时前来过", "warn", rev)
+            + bee_row("阿深", "深挖", "2 小时前来过", "warn", rev)
             + f'</div><div class="h2 mt28">谁做哪一步</div><div class="card mt12" style="padding:4px 16px">'
             f'<div class="kv"><span>缺省解读助手 · 分派助手没指名时</span><span class="sel">{bee_chip("阿读")}{ic("down", 16, "faint")}</span></div>'
             f'<div class="kv"><span>汇总助手 · 出每日摘要</span><span class="sel">{bee_chip("阿读")}{ic("down", 16, "faint")}</span></div>'
             f'<div class="kv"><span>精读助手 · 精读队列里的条目</span><span class="sel">{bee_chip("阿读")}{ic("down", 16, "faint")}</span></div>'
-            f'<div class="kv"><span>缺省精读助手 · 点「去深入对话」时</span><span class="sel">{bee_chip("阿深")}{ic("down", 16, "faint")}</span></div>'
+            f'<div class="kv"><span>缺省精读助手 · 点「去深挖」时</span><span class="sel">{bee_chip("阿深")}{ic("down", 16, "faint")}</span></div>'
             f'<div class="kv"><span>寿命档位（天）</span><span>7 · 30 · 90 · 365</span></div></div>'
             f'<p class="xs mt8">设成「无」的那一步没人做。</p>')
     right = (f'<div class="h2">规则</div><p class="sm mt4">写给分派助手的话：什么样的条目交给谁、活多久。它只看标题、来源和开头。</p>'
@@ -113,7 +113,7 @@ def add_bee(product="Claude"):
             f'<div class="pane read" style="padding-left:14px"><div class="card" style="padding:22px 24px;max-width:560px">{guide(product)}</div></div></div></div>')
 
 
-def bee_allow_page(product="Claude", name=RIPENER, steps="深入对话"):
+def bee_allow_page(product="Claude", name=RIPENER, steps="深挖"):
     kind = dict((x[0], x[1]) for x in PRODUCTS)[product]
     return (f'<div class="ui" style="align-items:center;justify-content:center"><div class="col" style="align-items:center;text-align:center;width:440px">'
             f'{logo("simple", 56)}<div class="mt12" style="width:100%">{join_allow(name, kind, "", steps=steps, warn=True, product=product)}</div></div></div>')
@@ -179,16 +179,16 @@ def allow_page():
 def screens():
     W = webapp
     return [
-        W("今天", "最上面是宽的今日状态。左边是今天的解读，每个四行，带三个动作，以前见过类似的就在解读上。右边是今晚的每日摘要、深入对话、处理过的。", "home", home(), "今天"),
+        W("今天", "最上面是宽的今日状态。左边是今天的解读，每个四行，带三个动作，以前见过类似的就在解读上。右边是今晚的每日摘要、深挖、处理过的。", "home", home(), "今天"),
         W("解读好了 · 浏览器通知", "v1.0 只有网页，通知走浏览器。页面正开着的时候不弹，解读直接出现在「今天」里；这一屏画的是页面在后台的时候。", "home", home(), "今天",
           overlay=f'<div class="macnote" style="top:14px"><span class="ai">{logo("app", 36)}</span><div><b>{NOTE_MANY[0]}</b>{NOTE_MANY[1]}</div></div>'),
-        W("每日摘要", "点「每日摘要」直接打开最新一份，左边按日期往前翻。四部分：总结、值得深读的（重点）、其余的（折叠）、睡前一问，最后「读了，晚安」。", "class", classes(), "每日摘要"),
-        W("笔记", "深入对话的产出，按时间排。可以下载，可以带附件。", "honey", honey(), "笔记"),
+        W("每日摘要", "点「每日摘要」直接打开最新一份，左边按日期往前翻。四部分：总结、值得深挖的（重点）、其余的（折叠）、睡前一问，最后「读了，晚安」。", "class", classes(), "每日摘要"),
+        W("笔记", "深挖的产出，按时间排。可以下载，可以带附件。", "honey", honey(), "笔记"),
         W("今天 · 这个月的月历", "从今天页右上的小月历点开。一天一个点；下面四个数；可以翻以前的月份。", "home",
           f'<div class="pane read"><div class="inner" style="max-width:520px;margin:0 auto">{hive_page()}</div></div>', "今天"),
         W("今天 · 点开一个条目", "条目不是单独的入口，从今天点进来。右边是详情：管理档的设备能改「交给哪个助手」和「活多久」。", "home", blooms(), "今天"),
-        W("每日摘要 · 点「深入对话」之后", "面板顶上两个选项：排入队列先精读，或者现在去深入对话。现在去时列出能深入对话的助手，缺省的那个已选好，一个按钮过去；排入队列的由定时来的助手精读。网页没有滑动，排入队列只在这里。", "class", classes(), "每日摘要", overlay=dig_modal()),
-        W("笔记 · 深读队列", "深入对话不是单独的入口：队列排在笔记页最上面，这里展开看全部。状态只有精读的三档；去没去深入对话只照实写。去过的那条有两个安静的出口：「把结果贴回来」和「移出队列」。", "honey", ripen(), "笔记"),
+        W("每日摘要 · 点「深挖」之后", "面板顶上两个选项：排入队列先精读，或者现在去深挖。现在去时列出能深挖的助手，缺省的那个已选好，一个按钮过去；排入队列的由定时来的助手精读。网页没有滑动，排入队列只在这里。", "class", classes(), "每日摘要", overlay=dig_modal()),
+        W("笔记 · 深挖队列", "深挖不是单独的入口：队列排在笔记页最上面，这里展开看全部。状态只有精读的三档；去没去深挖只照实写。去过的那条有两个安静的出口：「把结果贴回来」和「移出队列」。", "honey", ripen(), "笔记"),
         W("笔记 · 把结果贴回来", "助手不能替你存的时候（ChatGPT 的个人套餐）：标题、一个大的粘贴框、「存成笔记」。", "honey", ripen(), "笔记", overlay=paste_modal()),
         W("助手设置", "接入了哪几个助手、每个是定时来的还是对话里的、在哪个产品里；谁做哪一步、寿命档位、写给分派助手的规则。一次性的设置。", "set", settings_colony(), "助手设置"),
         W("助手设置 · 这个浏览器还没开通知", "每个浏览器各开一次。点「在这个浏览器里通知我」，浏览器才问权限。iPhone 上要先把网页加到主屏幕。", "set", settings_colony(False), "助手设置"),

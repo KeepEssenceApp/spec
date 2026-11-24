@@ -9,7 +9,7 @@ COLSEG = '<span class="seg"><span class="{a}">助手</span><span class="{b}">规
 def class_card(done=False):
     return (f'<div class="card"><div class="row"><span class="xs">今晚的每日摘要</span><span class="sp"></span>'
             f'{READ if done else UNREAD}</div>'
-            f'<div class="h2 mt4">每日摘要 · {DATE}</div><p class="sm mt4">存入了 9 条。2 条值得深读，其余 5 条收在后面。</p>'
+            f'<div class="h2 mt4">每日摘要 · {DATE}</div><p class="sm mt4">存入了 9 条。2 条值得深挖，其余 5 条收在后面。</p>'
             f'<div class="row mt12"><span class="btn sm">读每日摘要</span><span class="sp"></span><span class="xs">阿读 · 21:02 汇总</span></div></div>')
 
 
@@ -20,7 +20,7 @@ def waggle_card(n=2):
 
 def ripen_card(title="「能安全重放」怎么定义？"):
     return ripen_req(title, SIPPER, "ready",
-                     f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深入对话</span><span class="xs">{SIPPER}读好了</span></div>', label=True)
+                     f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深挖</span><span class="xs">{SIPPER}读好了</span></div>', label=True)
 
 
 def bees_card(ok=True):
@@ -36,7 +36,7 @@ def bees_card(ok=True):
 def reading(dark=False):
     return (f'<div class="xs">{SIPPER}汇总 · 21:02 · 存入了 9 条</div><div class="h1 mt4">每日摘要 · {DATE}</div>'
             f'<p class="sm mt8" style="line-height:1.65">{SUMMARY}</p>'
-            f'<div class="lab">值得深读的 · 2 条</div>{lesson_card(FLOWERS[0])}<div class="mt12">{lesson_card(FLOWERS[3])}</div>')
+            f'<div class="lab">值得深挖的 · 2 条</div>{lesson_card(FLOWERS[0])}<div class="mt12">{lesson_card(FLOWERS[3])}</div>')
 
 
 def reading_end(done=False):
@@ -59,8 +59,8 @@ def reading_swipe(done=False):
     head = (f'<div class="xs">{SIPPER}汇总 · 21:02 · 存入了 9 条</div><div class="h1 mt4">每日摘要 · {DATE}</div>'
             f'<p class="sm mt8" style="line-height:1.65">{SUMMARY}</p>')
     if not done:
-        return head + f'<div class="lab">值得深读的 · 2 条</div>{swipe(lesson_card(FLOWERS[0]), "dig")}<div class="mt12">{lesson_card(FLOWERS[3])}</div>'
-    return (head + f'<div class="lab">值得深读的 · 1 条</div>{lesson_card(FLOWERS[3])}'
+        return head + f'<div class="lab">值得深挖的 · 2 条</div>{swipe(lesson_card(FLOWERS[0]), "dig")}<div class="mt12">{lesson_card(FLOWERS[3])}</div>'
+    return (head + f'<div class="lab">值得深挖的 · 1 条</div>{lesson_card(FLOWERS[3])}'
             f'<div class="lab">处理过的 · 1 条</div><div class="fold" style="padding:2px 14px">{drop_done(FLOWERS[0], MARK_DIGQ)}</div>')
 
 
@@ -132,14 +132,14 @@ def kept_list():
     """Today > all items, filtered to the kept ones."""
     rows = "".join(bloom_row((b[0], b[1], b[2], 2, 0, b[5])) for b in (BLOOMS[4], BLOOMS[5], BLOOMS[7]))
     return (f'<div class="row"><span class="sm">收藏的条目 · 3 条 · 不过期</span><span class="sp"></span><span class="seg"><span>今天</span><span>全部</span><span class="on">收藏</span></span></div>'
-            f'<div class="lst mt4">{rows}</div><p class="xs mt12">收藏的条目是存入时的原样，加上助手的解读。它们不是笔记：笔记是你深入对话之后存回来的。</p>')
+            f'<div class="lst mt4">{rows}</div><p class="xs mt12">收藏的条目是存入时的原样，加上助手的解读。它们不是笔记：笔记是你深挖之后存回来的。</p>')
 
 
 def honey_list(queued=False):
     new = ""
     if queued:
         new = ('<div class="newmark">' + ripen_req(DIG_T, SIPPER, "wait", f'<p class="sm mt4">刚刚排进来。等{SIPPER}下一次来取活，读好了这里会出现「看精读」。</p>') + '</div><div class="mt8"></div>')
-    top = (f'<div class="lab" style="margin-top:0">深读队列 · {3 if queued else 2} 个</div>' + new + ripen_req(DIG[0], SIPPER, "ready", f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深入对话</span><span class="lk sm">看精读</span></div>')
+    top = (f'<div class="lab" style="margin-top:0">深挖队列 · {3 if queued else 2} 个</div>' + new + ripen_req(DIG[0], SIPPER, "ready", f'<div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深挖</span><span class="lk sm">看精读</span></div>')
            + '<div class="mt8">' + ripen_req(DIG[2], SIPPER, "wait", f'<p class="sm mt4">等{SIPPER}下一次来取活。</p>') + '</div><div class="lab">笔记 · 一直留着</div>')
     rows = "".join(f'<div class="li">{note_thumb()}<div class="col sp">'
                    f'<span class="ti">{t}</span><span class="xs mt4">{d} · {f}{(" · " + a) if a else ""}</span></div></div>' for t, d, f, a in HONEY[:3])
@@ -160,10 +160,10 @@ def honey_page():
 
 def ripen_list():
     return ('<div class="col g12">'
-            + ripen_req(DIG[0], SIPPER, "ready", f'<p class="sm mt4">{SIPPER}读好了，等你看。7 天没动静就移出。</p><div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深入对话</span><span class="lk sm">看精读</span><span class="sp"></span><span class="xs">11月21日 发起</span></div>')
+            + ripen_req(DIG[0], SIPPER, "ready", f'<p class="sm mt4">{SIPPER}读好了，等你看。7 天没动静就移出。</p><div class="row mt12"><span class="btn sm">{ic("chat", 15)}去深挖</span><span class="lk sm">看精读</span><span class="sp"></span><span class="xs">11月21日 发起</span></div>')
             + ripen_req(DIG[1], SIPPER, "prep", f'<p class="sm mt4">{SIPPER} 6 分钟前领走了，正在读原文、查相关的。</p>')
             + ripen_req(DIG[2], SIPPER, "wait", f'<p class="sm mt4">等{SIPPER}下一次来取活。它上次来是 4 分钟前。</p><div class="row mt8"><span class="sp"></span><span class="lk sm">移出队列</span></div>')
-            + ripen_req("墨水屏上的排版要不要自己调字重", RIPENER, "skip", f'<p class="sm mt4">11月20日 去过，{RIPENER}取过这一条。还没有笔记存回来。</p><div class="row mt12"><span class="btn quiet sm">{ic("chat", 15)}再去深入对话</span><span class="sp"></span><span class="lk sm">把结果贴回来</span><span class="lk sm">移出队列</span></div>')
+            + ripen_req("墨水屏上的排版要不要自己调字重", RIPENER, "skip", f'<p class="sm mt4">11月20日 去过，{RIPENER}取过这一条。还没有笔记存回来。</p><div class="row mt12"><span class="btn quiet sm">{ic("chat", 15)}再去深挖</span><span class="sp"></span><span class="lk sm">把结果贴回来</span><span class="lk sm">移出队列</span></div>')
             + '</div>')
 
 
@@ -174,7 +174,7 @@ def colony():
     return (COLSEG.format(a="on", b="", c="", d="") + f'<div class="lab">助手</div><div class="card" style="padding:2px 16px">'
             + bee_row("阿探", "分派助手 · 我们提供，免费", "刚刚来过")
             + bee_row("阿读", ALL3, "4 分钟前来过", "ok", REV)
-            + bee_row("阿深", "深入对话", "2 小时前来过", "warn", REV)
+            + bee_row("阿深", "深挖", "2 小时前来过", "warn", REV)
             + f'</div>{ADD_BEE}'
             f'<div class="lab">谁做哪一步</div><div class="card" style="padding:2px 16px">'
             f'<div class="kv"><span>缺省解读助手</span><span class="sel">{bee_chip("阿读")}{ic("down", 16, "faint")}</span></div>'
@@ -189,7 +189,7 @@ def bee_pick():
     return f'<p class="sm">选它在哪个产品里。每一种能做的事不一样。</p><div class="mt4">{product_list()}</div><p class="xs mt12">{KINDS_NOTE}</p>'
 
 
-def bee_allow(product="Claude", name=RIPENER, steps="深入对话"):
+def bee_allow(product="Claude", name=RIPENER, steps="深挖"):
     """The allow page for a bee, opened in the browser by the assistant. No short code."""
     kind = dict((x[0], x[1]) for x in PRODUCTS)[product]
     return (f'<div class="col" style="align-items:center;padding-top:20px;text-align:center">{logo("simple", 48)}'
@@ -259,7 +259,7 @@ def screens():
         A("今天 · 都处理完了", "只写一句话，不另画插图。背景里今天那个点已经是实心的。", today_empty(), tab="home", title="今天", right=" ", bg=hive_bg(MONTH[:-1] + [3])),
         A("解读好了 · 通知一句", "存入之后要等助手来取活，短则几分钟，长则几小时。解读一交回，发一句：判定在前，标题在后。点它直接打开这个解读。只说一次，没看也不再说；图标上不带数字。",
           springboard(), pad=False, bare=True, overlay=notif(*NOTE_ONE)),
-        A("连着解读好的 · 合成一条", "助手一次来读了六条，只收到一条：一共几条、几条值得深读、是哪两条。没取到内容的照实写。点它打开「今天」。",
+        A("连着解读好的 · 合成一条", "助手一次来读了六条，只收到一条：一共几条、几条值得深挖、是哪两条。没取到内容的照实写。点它打开「今天」。",
           springboard(), pad=False, bare=True, overlay=notif(*NOTE_MANY) + notif(*NOTE_MISS, "下午 3:12")),
         A("要不要通知 · 只问一次", "第一次有条目在等助手时，「今天」里多一张卡。点了「通知我」系统才弹权限提问；点「不用」就再也不问，以后想要去助手设置里开。",
           today_ask(), tab="home", title="今天", right=" ", bg=hive_bg()),
@@ -267,47 +267,47 @@ def screens():
         A("翻到上个月", "以前的月份整月都画出来。点有每日摘要的那个点打开那天的每日摘要。", hive_page(MONTH_OCT, "10月", ("203", "24", "22", "6"), "9月", "11月"), tab="home", title="", back="今天"),
         A("月初第一天", "只有一个点。", hive_page([1], "12月", ("3", "0", "0", "0"), "11月"), tab="home", title="", back="今天"),
         A("整月都没有条目", "没有条目的日子只是一个小点。没有红色，没有「你已经几天没来」。", hive_page(MONTH_NONE, "1月", ("0", "0", "0", "0"), "12月"), tab="home", title="", back="今天"),
-        A("每日摘要", "点页签直接打开最新一份；未读时页签上有个点。左上角翻以前的。四部分：总结、值得深读的、其余的、睡前一问。",
+        A("每日摘要", "点页签直接打开最新一份；未读时页签上有个点。左上角翻以前的。四部分：总结、值得深挖的、其余的、睡前一问。",
           reading(), tab="class", title="", back="以前的", right=ic("share", 20)),
         A("每日摘要 · 读到最后", "其余的折叠成一行一条，可以挽回。睡前一问不用回答。最后是「读了，晚安」。",
           reading_end(), tab="class", title="", back="以前的", right=ic("share", 20)),
-        A("往右滑 · 加入深读队列", "手机上，一个条目可以左右滑，只有两个动作。往右是留：加入深读队列。不用选，也不离开这一页；助手趁它排着先精读。卡上的三个按钮还在，滑动只是快一点。",
+        A("往右滑 · 加入深挖队列", "手机上，一个条目可以左右滑，只有两个动作。往右是留：加入深挖队列。不用选，也不离开这一页；助手趁它排着先精读。卡上的三个按钮还在，滑动只是快一点。",
           reading_swipe(), tab="class", title="", back="以前的", right=ic("share", 20)),
-        A("排入之后", "一句话，带撤销，自己消失。这一条缩成一行，可以挽回。不跳去助手那边：助手趁它排着先精读，你有空了去「笔记」页最上面看精读、去深入对话。",
+        A("排入之后", "一句话，带撤销，自己消失。这一条缩成一行，可以挽回。不跳去助手那边：助手趁它排着先精读，你有空了去「笔记」页最上面看精读、去深挖。",
           reading_swipe(True), tab="class", title="", back="以前的", right=ic("share", 20), overlay=f'<div class="hud" style="top:640px">{said_undo(SAY_DIGQ)}</div>'),
         A("往左滑 · 不感兴趣", "往左是去：不感兴趣。「今天」的解读和每日摘要里的一条都能滑，方向和意思一样。「看过了」没有滑动，还在卡上。",
           today_swipe(), tab="home", title="今天", right=" ", bg=hive_bg()),
         A("标了之后", "和点卡上的「不感兴趣」结果一样：缩成一行，可以挽回。",
           today_swipe(True), tab="home", title="今天", right=" ", bg=hive_bg(), overlay=f'<div class="hud" style="top:640px">{said_undo(SAY_NOPE)}</div>'),
-        A("笔记 · 排进来的那一条", "排进队列的条目出现在「笔记」页最上面。定时来的助手下次来取活时精读它；没等到精读也可以直接去深入对话。",
+        A("笔记 · 排进来的那一条", "排进队列的条目出现在「笔记」页最上面。定时来的助手下次来取活时精读它；没等到精读也可以直接去深挖。",
           honey_list(True), tab="honey", title="笔记"),
         A("以前的每日摘要", "按日期倒序，可以往前翻。漏了一天的会并进下一份。没有搜索。",
           '<div class="lst">' + "".join(
               f'<div class="li" style="align-items:center"><div class="col sp"><span class="ti">每日摘要 · {d}</span><span class="xs mt4">{s}</span></div>'
               f'{"" if r else UNREAD}{ic("chev", 16, "faint")}</div>' for d, s, r in CLASSES) + '</div>',
           tab="class", title="以前的每日摘要", back="最新"),
-        A("点「深入对话」之后 · 现在去深入对话", "面板顶上两个选项：排入队列先精读，或者现在去深入对话。点卡上的「深入对话」缺省是现在去：列出能深入对话的助手，缺省的已选好。选的是能用链接打开的对话助手（Claude）：一个按钮直接过去。",
+        A("点「深挖」之后 · 现在去深挖", "面板顶上两个选项：排入队列先精读，或者现在去深挖。点卡上的「深挖」缺省是现在去：列出能深挖的助手，缺省的已选好。选的是能用链接打开的对话助手（Claude）：一个按钮直接过去。",
           reading(), tab="class", title="", back="以前的", overlay=dig_sheet("link")),
-        A("现在去深入对话 · 打不开链接的", "对话助手没有链接可开（Gemini），或者它在手机 App 里：开场话放在框里，复制后贴过去。这是少数几样能复制的东西之一。",
+        A("现在去深挖 · 打不开链接的", "对话助手没有链接可开（Gemini），或者它在手机 App 里：开场话放在框里，复制后贴过去。这是少数几样能复制的东西之一。",
           reading(), tab="class", title="", back="以前的", overlay=dig_sheet("copy")),
-        A("点「深入对话」之后 · 排入队列，先精读", "切到左边：加入深读队列，助手趁它排着先精读，不用你在场。精读只有定时来的助手能做，对话里的选不了。和往右滑是同一件事。",
+        A("点「深挖」之后 · 排入队列，先精读", "切到左边：加入深挖队列，助手趁它排着先精读，不用你在场。精读只有定时来的助手能做，对话里的选不了。和往右滑是同一件事。",
           reading(), tab="class", title="", back="以前的", overlay=dig_sheet("read")),
-        other(A("深入对话 · 存成笔记", "这不是 KeepEssence 的界面，是助手自己的地方，画成中性的样子。助手从 KeepEssence 取到这一条；说「存成笔记」，它就存回来。对话不进核心。",
+        other(A("深挖 · 存成笔记", "这不是 KeepEssence 的界面，是助手自己的地方，画成中性的样子。助手从 KeepEssence 取到这一条；说「存成笔记」，它就存回来。对话不进核心。",
                 assist_chat(), title=ASSIST_T, big=False, pad=False)),
-        A("一份精读", "助手给队列里的一条交回来的东西：读出来的、另外查到的、可以接着问的。它跟着队列里的这一条走，不是笔记。可以带着它去深入对话，也可以看完就算了。",
-          read_page(), tab="honey", title="", back="深读队列"),
-        other(A("深入对话 · 在助手那边", "深入对话就是你带着这一条去助手那边：聊、让它再去查、做它那边预先配好的事（跑脚本之类）。这些 KeepEssence 都看不到，所以不管也不记，也没有「深入对话中」这种状态。有笔记存回来就留下；这一次没有，也没关系。",
+        A("一份精读", "助手给队列里的一条交回来的东西：读出来的、另外查到的、可以接着问的。它跟着队列里的这一条走，不是笔记。可以带着它去深挖，也可以看完就算了。",
+          read_page(), tab="honey", title="", back="深挖队列"),
+        other(A("深挖 · 在助手那边", "深挖就是你带着这一条去助手那边：聊、让它再去查、做它那边预先配好的事（跑脚本之类）。这些 KeepEssence 都看不到，所以不管也不记，也没有「深挖中」这种状态。有笔记存回来就留下；这一次没有，也没关系。",
                 assist_chat(msgs=CHAT_DEEP), title=ASSIST_T, big=False, pad=False)),
-        A("笔记", "深读队列排在最上面，每条写着精读到哪一步了。下面是笔记，按时间倒序，没有搜索，不显示寿命。", honey_list(), tab="honey", title="笔记"),
-        A("笔记 · 深读队列里的各种样子", "状态只有精读的三档：等精读、精读中、精读好了。去没去深入对话不是状态，只照实写「哪天去过」「有没有笔记回来」，因为助手那边做了什么我们不知道。有笔记回来就移出队列；也可以自己移出；7 天没动静移出。",
-          ripen_list(), tab="honey", title="深读队列", back="笔记"),
+        A("笔记", "深挖队列排在最上面，每条写着精读到哪一步了。下面是笔记，按时间倒序，没有搜索，不显示寿命。", honey_list(), tab="honey", title="笔记"),
+        A("笔记 · 深挖队列里的各种样子", "状态只有精读的三档：等精读、精读中、精读好了。去没去深挖不是状态，只照实写「哪天去过」「有没有笔记回来」，因为助手那边做了什么我们不知道。有笔记回来就移出队列；也可以自己移出；7 天没动静移出。",
+          ripen_list(), tab="honey", title="深挖队列", back="笔记"),
         A("把结果贴回来", "助手不能替你存的时候（ChatGPT 的个人套餐）：标题、一个大的粘贴框、「存成笔记」。",
-          ripen_list(), tab="honey", title="深读队列", back="笔记", overlay=paste_sheet()),
+          ripen_list(), tab="honey", title="深挖队列", back="笔记", overlay=paste_sheet()),
         A("一篇笔记", "自己站得住：结论写全，出处只留标题和网址，记下出自哪份每日摘要。可以带附件，可以下载。",
           honey_page(), title="", back="笔记", right=ic("dl", 20)),
         A("一个条目", "原文入口、解读、以前见过类似的。只有这里能看到并改「交给哪个助手」和「活多久」。",
           bloom_detail(), tab="home", title="", back="今天"),
-        A("一个条目 · 收藏", "条目是存入的，到期删除。想一直留着就在「活多久」里选「收藏」：其实就是把期限延到不过期。不用精读，也不用深入对话。",
+        A("一个条目 · 收藏", "条目是存入的，到期删除。想一直留着就在「活多久」里选「收藏」：其实就是把期限延到不过期。不用精读，也不用深挖。",
           bloom_detail(True), tab="home", title="", back="今天"),
         A("收藏的条目", "在「今天」的全部条目里，多一个「收藏」的筛选。它们是原样留下的条目，不是笔记，所以不在「笔记」页。",
           kept_list(), tab="home", title="全部条目", back="今天"),

@@ -5,7 +5,7 @@
 1. [form](form.md)：产品是什么，流程，寿命，用户的动作。
 2. [glossary](glossary.md)：术语。全套文档和接口只用这些词。
 3. [rules](rules.md)：必须遵守的规则。
-4. [助手](assistants.md)：助手（agent）怎么接入、取活、交回；精读与深入对话。
+4. [助手](assistants.md)：助手（agent）怎么接入、取活、交回；精读与深挖。
 5. [platforms](platforms.md)：平台各管什么；v1.0 的范围。
 6. [connect](connect.md)：各个产品怎么接进来当助手。
 

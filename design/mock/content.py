@@ -41,7 +41,7 @@ def item_html(i, acts=True, dislike=True, src=True):
     t, c, st, su = ITEMS[i]
     a = ""
     if acts:
-        a = (f'<div class="acts"><span class="btn quiet sm">{ic("chat", 15)}深入对话</span><span class="sp"></span>'
+        a = (f'<div class="acts"><span class="btn quiet sm">{ic("chat", 15)}深挖</span><span class="sp"></span>'
              + ('<span class="btn ghost sm">不感兴趣</span><span class="btn ghost sm">看过了</span>' if dislike else "") + "</div>")
     s = f'<div class="src mt4">{ic("link", 13)}<em>{st} · {su}</em></div>' if src else ""
     return f'<div class="it"><div class="h3">{t}</div><p class="verdict mt4">{c}</p>{s}{a}</div>'
@@ -59,7 +59,7 @@ BLOOMS = [
     ("img", "手冲咖啡粉水比对照表", "来自 Mac", 2, 3, "阿读"),
     ("file", "季度账单.pdf", "来自 iPhone · 分享", 2, 1, "阿读"),
 ]
-STATE = {0: "等分派", 1: "等解读", 2: "已解读", 3: "值得深读", 4: "留成笔记"}
+STATE = {0: "等分派", 1: "等解读", 2: "已解读", 3: "值得深挖", 4: "留成笔记"}
 
 
 def note_thumb():
@@ -68,7 +68,7 @@ def note_thumb():
 
 
 LIFE_NOTE = "到期连同解读一起删除；用户看不见，归档副本的保留规则见数据保留说明。每日摘要里的那一条不受影响。"
-KEEP_NOTE = "收藏就是把期限延到不过期：原文和解读一直留着。不用精读，也不用深入对话。随时可以改回来。"
+KEEP_NOTE = "收藏就是把期限延到不过期：原文和解读一直留着。不用精读，也不用深挖。随时可以改回来。"
 
 
 def life_pick(days=90):
@@ -93,10 +93,10 @@ HONEY = [
     ("给个人工具定价：免费的那一档该包含什么", "11月2日", "出自 11月1日 每日摘要 · 第 3 条", ""),
 ]
 
-CLASSES = [("11月21日 周六", "存入了 9 条 · 2 条值得深读", False), ("11月20日 周五", "存入了 12 条 · 3 条值得深读", True),
-           ("11月19日 周四", "存入了 6 条 · 1 条值得深读", True), ("11月18日 周三", "存入了 15 条 · 4 条值得深读", True),
-           ("11月16日 周一", "存入了 4 条 · 含 15 日漏归的 2 条", True), ("11月14日 周六", "存入了 8 条 · 2 条值得深读", True),
-           ("11月13日 周五", "存入了 11 条 · 3 条值得深读", True)]
+CLASSES = [("11月21日 周六", "存入了 9 条 · 2 条值得深挖", False), ("11月20日 周五", "存入了 12 条 · 3 条值得深挖", True),
+           ("11月19日 周四", "存入了 6 条 · 1 条值得深挖", True), ("11月18日 周三", "存入了 15 条 · 4 条值得深挖", True),
+           ("11月16日 周一", "存入了 4 条 · 含 15 日漏归的 2 条", True), ("11月14日 周六", "存入了 8 条 · 2 条值得深挖", True),
+           ("11月13日 周五", "存入了 11 条 · 3 条值得深挖", True)]
 
 WAGGLE = [("新存入的「把定时任务做成幂等的七种写法」", "和 11月19日 每日摘要里讲租约的那条说的是同一个问题。"),
           ("新存入的「Streamable HTTP 传输说明」", "你 11月16日 那篇笔记「同步冲突」里引用过它的上一版。")]
@@ -117,10 +117,10 @@ SAY_ASK_SUB = "还没有上传，也没有留在{}上。"
 
 # The one notification: an item has been read. Bold line, then the title(s). The same wording on every platform.
 # Nothing else is ever notified: not the digest, not items about to be cleaned up, not an assistant that did not come.
-NOTE_ONE = ("解读好了 · 值得深读", T0)
-NOTE_MANY = ("解读好了 6 条 · 2 条值得深读", T0 + "、持久化的 agent 运行框架")
-NOTE_MISS = ("解读好了 3 条 · 1 条没取到内容", "没有值得深读的")
-NOTIFY = ["都通知", "有值得深读的才通知", "不通知"]
+NOTE_ONE = ("解读好了 · 值得深挖", T0)
+NOTE_MANY = ("解读好了 6 条 · 2 条值得深挖", T0 + "、持久化的 agent 运行框架")
+NOTE_MISS = ("解读好了 3 条 · 1 条没取到内容", "没有值得深挖的")
+NOTIFY = ["都通知", "有值得深挖的才通知", "不通知"]
 NOTIFY_NOTE = "连着解读好的合成一条，里面只有标题和判定。只有这一种通知：每日摘要出了、条目快要到期删除、助手没来，都不发。"
 ASK_NOTIFY = "解读好了通知你？"
 ASK_NOTIFY_SUB = "助手来取活要等一会儿。解读好了发一句，只有标题和判定。别的事不通知。"
@@ -139,14 +139,14 @@ def notify_card(here="这台 iPhone", ok=True, on=0, ask="去系统设置里打�
 
 # A ripen request: state -> (label, pill class). The same five everywhere.
 # Three depths, one word each. 解读: every item, the assistant, automatic. 精读: an item in the dig queue, an assistant alone,
-# while it waits. 深入对话: the user takes the item to the assistant (talk, search again, run things there).
+# while it waits. 深挖: the user takes the item to the assistant (talk, search again, run things there).
 # The platform cannot see what happens at the assistant's place, so an item in the queue has no "digging now" or "finished"
 # state. Its only states are about the close reading; everything else is a fact: when it was queued, whether the user went,
 # whether a note came back.
 RIPEN = {"wait": ("等精读", ""), "prep": ("精读中", "warn"), "ready": ("精读好了", "ok"),
          "skip": ("没做精读", "plain"), "void": ("已移出", "off")}
-STEP_READ, STEP_DIG = "精读", "深入对话"
-READ_SAYS = "加入深读队列。助手趁它排着先精读，不用你在场；读好了在「笔记」页最上面等你。"
+STEP_READ, STEP_DIG = "精读", "深挖"
+READ_SAYS = "加入深挖队列。助手趁它排着先精读，不用你在场；读好了在「笔记」页最上面等你。"
 DIG_SAYS = "现在就带着这一条去助手那边：聊、让它再查、做它那边能做的事。有笔记存回来就留下，没有也没关系。"
 
 
@@ -157,7 +157,7 @@ def ripen_pill(state):
 
 def ripen_req(title, bee, state, body="", label=False):
     """One ripen request: state pill on the left, the bee on the right, the question, then what happens next."""
-    lab = '<span class="xs">深入对话</span>' if label else ""
+    lab = '<span class="xs">深挖</span>' if label else ""
     return (f'<div class="card"><div class="row">{lab}{ripen_pill(state)}<span class="sp"></span>{bee_chip(bee)}</div>'
             f'<div class="h3 mt8">{title}</div>{body}</div>')
 
@@ -223,7 +223,7 @@ FLOWERS = [
 ]
 FAILED = dict(kind="文章", icon="link", title="example.net 上的一页", src="example.net", at="15:02", days=30,
               what="没取到内容", fact="", pts=[], v=None, wag="")
-VERDICT = [("值得深读", "honey ring"), ("知道就行", "ok"), ("可以略过", "off")]
+VERDICT = [("值得深挖", "honey ring"), ("知道就行", "ok"), ("可以略过", "off")]
 
 
 def verdict_pill(v):
@@ -245,7 +245,7 @@ def stage1(f, st=0):
 
 
 def acts3(sm=True):
-    return (f'<div class="acts"><span class="btn quiet sm">{ic("chat", 15)}深入对话</span>'
+    return (f'<div class="acts"><span class="btn quiet sm">{ic("chat", 15)}深挖</span>'
             f'<span class="btn ghost sm">不感兴趣</span><span class="btn ghost sm">看过了</span></div>')
 
 
@@ -264,10 +264,10 @@ def drop(f, acts=True, pts=3):
 
 
 # Swiping an item on a phone: right keeps it (queue it for digging), left drops it (not interested). Two actions, no more.
-SWIPE = {"dig": ("chat", "加入深读队列"), "no": ("nope", "不感兴趣")}
-SAY_DIGQ = "已加入深读队列"
+SWIPE = {"dig": ("chat", "加入深挖队列"), "no": ("nope", "不感兴趣")}
+SAY_DIGQ = "已加入深挖队列"
 SAY_NOPE = "已标为不感兴趣"
-MARK_DIGQ = "已加入深读队列"
+MARK_DIGQ = "已加入深挖队列"
 
 
 def swipe(card, side):
@@ -376,7 +376,7 @@ def join_allow(name, kind, can, cannot="", steps="", warn=False, tier=None, chos
         if isinstance(steps, str):
             steps = [(t, True) for t in steps.split('、')]
         boxes = "".join(check(t, on) for t, on in steps)
-        only = '<p class="xs mt8">对话里的助手只在你和它聊的时候干活，所以只有深入对话，不能精读。</p>' if kind == K_CHAT else ""
+        only = '<p class="xs mt8">对话里的助手只在你和它聊的时候干活，所以只有深挖，不能精读。</p>' if kind == K_CHAT else ""
         return (f'<div class="h2">{product} 想接入</div><p class="sm mt4">是你刚才在{" " if product[0].isascii() else ""}{product} 那边发起的，才点允许。</p>'
                 f'<div class="card mt12" style="text-align:left"><div class="xs">给这个助手起个名字</div>'
                 f'<div class="inp row mt4"><b class="sp">{name}</b><span class="xs">可以改</span></div>'
@@ -394,7 +394,7 @@ def join_allow(name, kind, can, cannot="", steps="", warn=False, tier=None, chos
 
 # name, icon, kind, tier or steps, last used
 DEVICES = [("iPhone · App", "device", "客户端", "管理", "今天 20:51"), ("Chrome · 这台 Mac", "img", "客户端", "管理", "刚刚"),
-           ("阿读", "bee", "助手 · 定时来的", "解读、汇总、精读、深入对话", "4 分钟前"), ("阿深", "bee", "助手 · 对话里的", "深入对话", "2 小时前"),
+           ("阿读", "bee", "助手 · 定时来的", "解读、汇总、精读、深挖", "4 分钟前"), ("阿深", "bee", "助手 · 对话里的", "深挖", "2 小时前"),
            ("墨水屏阅读器", "book", "客户端", "读", "昨天 22:10"), ("iPhone · 快捷指令", "device", "客户端", "只存入", "今天 20:58"),
            ("Chrome 扩展 · Mac", "img", "客户端", "只存入", "今天 15:12"), ("Firefox 扩展 · Mac", "img", "客户端", "只存入", "11月19日")]
 
@@ -416,7 +416,7 @@ def last_mgr_note():
 
 
 def perm_table():
-    rows = [("存入东西", 1, 1, 1, 0), ("读今天、每日摘要、笔记", 0, 1, 1, 0), ("深入对话、不感兴趣、看过了、读了", 0, 1, 1, 0),
+    rows = [("存入东西", 1, 1, 1, 0), ("读今天、每日摘要、笔记", 0, 1, 1, 0), ("深挖、不感兴趣、看过了、读了", 0, 1, 1, 0),
             ("看今日状态：谁在干活", 0, 1, 1, 0), ("改一个条目「交给谁」「活多久」", 0, 0, 1, 0), ("管理助手设置和规则", 0, 0, 1, 0),
             ("允许新设备接入", 0, 0, 1, 0), ("给设备改名、改权限、撤销", 0, 0, 1, 0), ("取分给它的活、交回结果", 0, 0, 0, 1)]
     body = "".join(f'<tr><td>{r[0]}</td>' + "".join(f'<td class="{"y" if v else "n"}">{"✓" if v else "—"}</td>' for v in r[1:]) + '</tr>' for r in rows)
@@ -431,13 +431,13 @@ def revoke_confirm(name="Firefox 扩展 · Mac"):
 # ---------------------------------------------------------------- round 9: joining a bee. An address to paste, then the allow page. No short code.
 K_SCHED, K_CHAT = "定时来的", "对话里的"
 ADDR = "keepessence.app/mcp"          # the same for everyone; not a credential
-ALL3 = "解读、汇总、精读、深入对话"       # the name is historical: it used to be three steps
+ALL3 = "解读、汇总、精读、深挖"       # the name is historical: it used to be three steps
 SELF = "自己部署的 agent"
 
 # product, kind, what it can do, the small note
-PRODUCTS = [("Claude", K_CHAT, "深入对话", "各套餐都能接；能把笔记存回来"),
-            ("ChatGPT", K_CHAT, "深入对话", "在网页上接；个人套餐只能读，笔记由你贴回来"),
-            ("Gemini", K_CHAT, "深入对话", "目前只限美国、英文、个人账号"),
+PRODUCTS = [("Claude", K_CHAT, "深挖", "各套餐都能接；能把笔记存回来"),
+            ("ChatGPT", K_CHAT, "深挖", "在网页上接；个人套餐只能读，笔记由你贴回来"),
+            ("Gemini", K_CHAT, "深挖", "目前只限美国、英文、个人账号"),
             ("Muse", K_SCHED, ALL3, "待验证"),
             (SELF, K_SCHED, ALL3, "支持 MCP 和 OAuth 的都行")]
 # which product each of our sample bees runs in
@@ -483,7 +483,7 @@ def product_list(on=None):
     return ('<div class="lst">' + "".join(product_row(p, p[0] == on) for p in PRODUCTS) + '</div>')
 
 
-KINDS_NOTE = "「对话里的」只在你去找它的时候干活，只能深入对话。「定时来的」自己按时来取活，解读、汇总、精读都能做，也能深入对话。"
+KINDS_NOTE = "「对话里的」只在你去找它的时候干活，只能深挖。「定时来的」自己按时来取活，解读、汇总、精读都能做，也能深挖。"
 
 
 def addr_box():
@@ -512,7 +512,7 @@ def guide(product):
 
 # ---------------------------------------------------------------- round 9: digging. Pick a bee, then go and talk where it lives.
 DIG_T = "把超时做成租约"
-OPENING = f"深入对话 KeepEssence 里的这一条：{DIG_T}"
+OPENING = f"深挖 KeepEssence 里的这一条：{DIG_T}"
 SAVED = f"已交回 KeepEssence：《{DIG_T}》"
 
 
@@ -522,7 +522,7 @@ def opening_box():
 
 
 def dig_pick(mode="link"):
-    """The sheet behind 「深入对话」: queue it (an assistant reads it closely meanwhile), or go and dig now; then who.
+    """The sheet behind 「深挖」: queue it (an assistant reads it closely meanwhile), or go and dig now; then who.
     mode: read (queue it; only a scheduled assistant can read on its own) | link (dig now, with a chat assistant we can open
     by link) | copy (dig now, with one we cannot open, or a phone app). 'sched' is the old name of read."""
     read = mode in ("read", "sched")
@@ -540,7 +540,7 @@ def dig_pick(mode="link"):
                 + (f'<span class="xs">{note}</span>' if note else "") + '</div>')
     rows = "".join(row(i, *b) for i, b in enumerate(bees))
     if read:
-        tail = (f'<div class="mt16"><span class="btn block">加入深读队列</span></div>'
+        tail = (f'<div class="mt16"><span class="btn block">加入深挖队列</span></div>'
                 f'<p class="xs mt8">等{SIPPER}下一次来取活。读好了可以看，再决定去不去{STEP_DIG}。</p>')
     elif mode == "link":
         tail = (f'<div class="mt16"><span class="btn block">{ic("chat", 18)}去 {prod} {STEP_DIG}</span></div>'
@@ -548,7 +548,7 @@ def dig_pick(mode="link"):
     else:
         tail = (f'<div class="xs mt16">开场话 · 复制后贴到对话里</div><div class="mt4">{opening_box()}</div>'
                 f'<div class="mt12"><span class="btn block">打开 {prod}</span></div>')
-    return (f'<div class="h2">深入对话</div><p class="sm mt4">{DIG_T}</p><div class="mt12">{seg}</div>'
+    return (f'<div class="h2">深挖</div><p class="sm mt4">{DIG_T}</p><div class="mt12">{seg}</div>'
             f'<p class="xs mt8">{READ_SAYS if read else DIG_SAYS}</p>{rows}{tail}')
 
 
@@ -569,7 +569,7 @@ def read_page():
             f'<div class="lab">读出来的</div><ul class="pts">{p}</ul><div class="lab">另外查到的</div>{f}'
             f'<div class="lab">可以接着问的</div><ul class="pts">{q}</ul>'
             f'<div class="mt16"><span class="btn block">{ic("chat", 18)}去{STEP_DIG}</span></div>'
-            f'<p class="xs mt8">{STEP_READ}跟着队列里的这一条走，不是笔记。去深入对话时助手会带上它；有笔记存回来才会留下。7 天没有动静，它和这一条一起移出队列。</p>')
+            f'<p class="xs mt8">{STEP_READ}跟着队列里的这一条走，不是笔记。去深挖时助手会带上它；有笔记存回来才会留下。7 天没有动静，它和这一条一起移出队列。</p>')
 
 
 # the conversation on the assistant's side: (mine?, text)
@@ -584,7 +584,7 @@ CHAT = [(1, OPENING),
 
 
 # digging, at the assistant's place, with the close reading in hand: it searches again and runs something of its own. 2 = what it did there.
-CHAT_DEEP = [(1, f"带着{SIPPER}的精读和深入对话：{DIG_T}"),
+CHAT_DEEP = [(1, f"带着{SIPPER}的精读和深挖：{DIG_T}"),
              (0, f"我取到了这一条和{SIPPER}的精读。精读里留了三个问题，从第一个开始？"),
              (1, "先去查一下别的队列是怎么定租约的"),
              (2, "查了 14 个来源，用了 3 分钟"),

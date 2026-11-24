@@ -2,7 +2,7 @@
 
 状态：草案，2026-11-24。范围：在 Cloudflare 上搭核心和分派助手，对齐 PoC（~/all-keep）已有功能到新模型。只写架构，不写实现代码。第一期开工规格见 [techspec](techspec.md)。冲突时以 [form](form.md)、[rules](rules.md) 为准；待定项见 open #37–#53。
 
-术语：**攒存**（采集动作：内容在一段时间里攒进来，接口动词 save，界面叫「存入」）、**条目**（用户攒存的原始内容）、**解读**（单条的 AI 分析，四项）、**每日摘要**（每天一份）、**笔记**（深入对话的最终结果，可带附件）、**助手**（外部的 agent）、**初筛**（决定条目交给哪个助手、保留多久）、**过期**（到期后移入归档，用户看不见）、**归档**（过期条目的保存，长期保留，系统自行清理，不对用户展示或通知）、**认领**（助手领走一份活，有期限）。
+术语：**攒存**（采集动作：内容在一段时间里攒进来，接口动词 save，界面叫「存入」）、**条目**（用户攒存的原始内容）、**解读**（单条的 AI 分析，四项）、**每日摘要**（每天一份）、**笔记**（深挖的最终结果，可带附件）、**助手**（外部的 agent）、**初筛**（决定条目交给哪个助手、保留多久）、**过期**（到期后移入归档，用户看不见）、**归档**（过期条目的保存，长期保留，系统自行清理，不对用户展示或通知）、**认领**（助手领走一份活，有期限）。
 
 ## 1 组件图
 
@@ -12,7 +12,7 @@ flowchart LR
     IOS["iPhone 快捷指令"]
     EXT["浏览器扩展"]
     WEB["网页"]
-    NAT["iPhone、安卓、Mac（v1.x）"]
+    NAT["iPhone、Mac；安卓（v1.x）"]
   end
   subgraph CF["Cloudflare"]
     API["Workers：HTTP API"]
@@ -26,7 +26,7 @@ flowchart LR
   subgraph A["外部助手"]
     MUSE["Muse（定时型）"]
     SELF["自部署 agent（定时型）"]
-    CHAT["Claude、ChatGPT、Gemini（对话型，只做深入对话）"]
+    CHAT["Claude、ChatGPT、Gemini（对话型，只做深挖）"]
   end
   IOS --> API
   EXT --> API
@@ -50,7 +50,7 @@ flowchart LR
 | 组件 | 职责 | 理由 | 类别 |
 |---|---|---|---|
 | Workers | HTTP API、MCP 端点、OAuth 与设备授权、分派助手（初筛）、发通知（Web Push；v1.x 加 APNs、FCM） | 无服务器，HTTPS 自带 | 必需 |
-| D1 | 条目、解读、每日摘要、深读队列、设备、授权、配额、认领、用量、统计 | SQLite 语义，单条条件更新即可认领 | 必需 |
+| D1 | 条目、解读、每日摘要、深挖队列、设备、授权、配额、认领、用量、统计 | SQLite 语义，单条条件更新即可认领 | 必需 |
 | R2 | 图片与附件，预签名上传下载 | 出口免费；兼容 S3 预签名 | 必需 |
 | Cron Triggers | 过期归档、认领释放、摘要到期、初筛扫描、发通知、配额对账、归档清理（策略待定，#46） | 原生定时 | 必需 |
 | Secrets | 模型密钥、令牌签名密钥、Web Push 密钥 | 不进仓库（E1） | 必需 |
@@ -100,8 +100,8 @@ flowchart LR
 | GET /assistant/rules?kind= | get_rules | 规则与相关设置 |
 | GET /assistant/items/{id}/context?for= | get_context | 只读上下文 |
 | POST /assistant/claims/{id}/submit | submit_result | 交回（标签、解读、每日摘要、精读报告、笔记）并附用量 |
-| GET /assistant/deep-dive-candidates | list_deep_dive_candidates | 对话型助手：可深入对话的条目（只读） |
-| POST /assistant/deep-dive-requests | register_deep_dive | 对话型助手：登记深入对话 |
+| GET /assistant/deep-dive-candidates | list_deep_dive_candidates | 对话型助手：可深挖的条目（只读） |
+| POST /assistant/deep-dive-requests | register_deep_dive | 对话型助手：登记深挖 |
 | POST /assistant/notes | save_note | 对话型助手：存回笔记（须用户明确要求） |
 
 超出授权步骤返回 403。分派助手只用 claim_work（triage）和 submit_result（只含标签）。
@@ -119,8 +119,8 @@ Cron 每小时；初筛与通知每分钟。
 
 - **条目过期**：pinned=0，且 expires_at 已到且 queue_holds=0，或 hard_expires_at 已到，则设 archived_at。归档的条目不出现在任何列表、查询、搜索、每日摘要或初筛里，界面不显示，也不通知用户。归档保留全部数据（条目、解读、标签、附件）；R2 对象不删。
 - **归档清理**：由系统按内部策略执行。缺省是长期保留，清理策略待定（open #46）。清理前不展示、不通知。
-- **保留只推迟到期**：深读队列中的条目 queue_holds>0 暂不归档；hard_expires_at 不变，过期前总寿命不超过一年。
-- **深入对话与上传**：7 天无动静按 §3 移出或删除；认领过期清空 claim_id；上传未完成超过 1 小时删记录与对象。
+- **保留只推迟到期**：深挖队列中的条目 queue_holds>0 暂不归档；hard_expires_at 不变，过期前总寿命不超过一年。
+- **深挖与上传**：7 天无动静按 §3 移出或删除；认领过期清空 claim_id；上传未完成超过 1 小时删记录与对象。
 - **每日摘要**：用户本地 21:00 之后，当天有条目且无摘要，设 due_at；GET /assistant/work 出现「每日摘要」类活。漏掉的日子并入下一份。
 - **通知**：解读或精读交回时记进该用户的待发批次；初筛交回不记。每分钟检查：最后一次交回已过 2 分钟，或第一次已过 10 分钟，就发一条。发之前去掉已处理和 notify 排除的条目，一条不剩就不发。只发给读档、管理档的设备；发送失败重试一次；地址失效删 push_targets。
 - **初筛**：每分钟取待初筛条目（≤10）交分派助手；超过 10 分钟未初筛，核心补缺省（缺省助手，expiry_days 30）。初筛完成不发通知（规则 A16）。

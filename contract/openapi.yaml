@@ -118,6 +118,15 @@ x-shared-rules:
     declined: { zh: "没存入。", en: "Not saved." }
     failed: { zh: "没存入：{reason}", en: "Not saved: {reason}" }
     secret_like_question: { zh: "这段内容看起来像密码或凭据，还要存入吗？", en: "This looks like a password or a credential. Save it anyway?" }
+  save_notes:
+    description: >
+      What a saving client adds after the core's sentence when what it saved is not what the user gave it
+      (rule B2: no more than the facts, no less). The client knows it, the core does not: the picture is
+      prepared on the device. A note follows `saved` only, never `duplicate`. No window and no second press (B1).
+      The wording is a draft until the copy is approved; it is one place, so changing it changes every client.
+    image_as_link: { zh: "这张图片没读出来，存的是它的网址。", en: "The image could not be read, so its address was saved instead." }
+    image_not_saved: { zh: "图片没存入：读不出来，或者太大。", en: "The image was not saved: it could not be read, or it is too large." }
+    gif_first_frame: { zh: "这是动图，只存入了第一帧。", en: "This is an animated picture. Only its first frame was saved." }
   verdicts:
     worth_deep_dive: { zh: "值得深挖", en: "Worth a deep dive" }
     good_to_know: { zh: "知道就行", en: "Good to know" }

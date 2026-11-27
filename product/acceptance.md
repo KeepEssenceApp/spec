@@ -24,7 +24,7 @@
 | P3 | 桌面浏览器 | Chrome 系一种，可加载未打包的扩展 | Chrome、Edge、Brave 在 |
 | P4 | 构建工具 | Node、wrangler、Xcode | Node 22、wrangler 4、Xcode 27.2，签名身份 3 个 |
 | P5 | Cloudflare | 能建 Workers、D1、R2、定时任务 | 凭据可用；不能改 DNS 记录和重定向规则 |
-| P6 | 模型 | 内置助手调得通；两个活分开配：初筛（分派助手）用 claude-haiku-5-5 / low，解读和每日摘要（工作助手）用 claude-sonnet-5-5 / medium | haiku-5-5：2026-11-24 实测一次调用成功。sonnet-5-5 / medium：2026-11-27 用编造内容实测通过（见 internal-qa #99）。网关认这个名字，也认 `effort=medium`（写成不存在的档位会被 400 拒绝，说明这个字段有被检查）；返回的 model 就是 claude-sonnet-5-5。长文本（24000 字）、图片、PDF、每日摘要各调一次，最慢 7.8 秒，都在 25 秒内（每种只测一次，从开发机发出，不是从 Worker 发出）。上线后的真实延迟和用量另看 |
+| P6 | 模型 | 内置助手调得通；两个活分开配：初筛（分派助手）用 claude-haiku-5-5 / low，解读和每日摘要（工作助手）用 claude-sonnet-5-5 / medium | haiku-5-5：2026-11-24 实测一次调用成功（原记录，这次没动）。sonnet-5-5 / medium：**已有调用记录（2026-11-27，用编造内容，至少 20 次，见 internal-qa #99），但未经 Cheney 有效授权，尚未经独立核验，不构成验收，也不是上线依据。** 验收结论：待定。网关接受 `effort=medium` 只说明网关接受这个字段，不证明上游按 medium 执行；调用次数的总量、实际时间都没有独立记录。详见 [更正记录](correction-99-gateway-calls.md)。等 Cheney 在 open #61 明确答复、按他批的范围做、并经独立核验之后，再在这里写结果。上线后的真实延迟和用量另看 |
 
 ## 2 契约（spec/contract）
 

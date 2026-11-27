@@ -511,6 +511,7 @@ paths:
           description: "`today`: saved and not yet in a daily digest. `digested`: already in one. `pinned`: kept without expiry."
         - { $ref: "#/components/parameters/Cursor" }
         - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Items
@@ -533,6 +534,7 @@ paths:
       parameters:
         - { name: q, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 100 } }
         - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Matches
@@ -552,6 +554,8 @@ paths:
       operationId: getItem
       summary: One item with its body, analysis and tags.
       x-tier: read
+      parameters:
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Item
@@ -568,6 +572,8 @@ paths:
         saving. On a pinned item it also unpins. Any change here marks both values as set by
         the user: triage does not change them afterwards.
       x-tier: manage
+      parameters:
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       requestBody:
         required: true
         content:
@@ -1737,6 +1743,19 @@ components:
       name: limit
       in: query
       schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    UnavailableReasons:
+      name: unavailable_reasons
+      in: query
+      required: false
+      schema: { type: string, maxLength: 200, example: analysis_failed }
+      description: >
+        The reasons for `unavailable: true` in an analysis that are newer than the first one (the content could not be
+        fetched) and that this client tells apart by `summary` and shows as such, comma-separated. Today the only one is
+        `analysis_failed`: the core's own assistant gave no analysis in the tries it is allowed (techspec §11). The core
+        hands that analysis as `unavailable: true` with `x-shared-rules.analysis_failed` as `summary` only to a client
+        that lists `analysis_failed` here. What a client that does not list it gets is not decided yet (techspec §11).
+        Names the core does not know are ignored, not an error. A client that omits it is answered as before. Meant for
+        the user's own devices; the assistant interface and the export always say what the core recorded.
 
   responses:
     Error:
@@ -1844,7 +1863,7 @@ components:
       type: object
       required: [unavailable, assistant]
       properties:
-        unavailable: { type: boolean, description: "True when the content could not be fetched, or when the core's own assistant gave no analysis in the tries it is allowed (`summary` says which: `x-shared-rules.content_unavailable` or `analysis_failed`). Then only `summary` is present." }
+        unavailable: { type: boolean, description: "True when the content could not be fetched, or when the core's own assistant gave no analysis in the tries it is allowed (`summary` says which: `x-shared-rules.content_unavailable` or `analysis_failed`). Then only `summary` is present. The second reason is handed only to a client that lists `analysis_failed` in `unavailable_reasons` (techspec §11); a client must tell the two apart by `summary`, never show `unavailable: true` as one fixed sentence." }
         summary: { type: string }
         key_fact: { type: string }
         points: { type: array, maxItems: 3, items: { type: string } }

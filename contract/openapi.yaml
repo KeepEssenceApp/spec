@@ -123,6 +123,10 @@ x-shared-rules:
     good_to_know: { zh: "知道就行", en: "Good to know" }
     skippable: { zh: "可以略过", en: "Skippable" }
   content_unavailable: { zh: "没取到内容", en: "Content could not be fetched" }
+  # The core's own model did not give an analysis, or write a day's digest, in the tries it is allowed (techspec §11).
+  # Not the same as `content_unavailable`: there the content was not fetched; here it was, and the model gave nothing.
+  analysis_failed: { zh: "没解读出来", en: "Could not be analysed" }
+  digest_gave_up: { zh: "今天没生成出来", en: "Today's daily digest could not be written" }
   video:
     description: >
       What an item says about its video, which is read apart from the item's text (`video_state`). The core
@@ -1828,7 +1832,7 @@ components:
       type: object
       required: [unavailable, assistant]
       properties:
-        unavailable: { type: boolean, description: True when the content could not be fetched. Then only `summary` is present. }
+        unavailable: { type: boolean, description: "True when the content could not be fetched, or when the core's own assistant gave no analysis in the tries it is allowed (`summary` says which: `x-shared-rules.content_unavailable` or `analysis_failed`). Then only `summary` is present." }
         summary: { type: string }
         key_fact: { type: string }
         points: { type: array, maxItems: 3, items: { type: string } }
@@ -2012,7 +2016,14 @@ components:
         saved_today: { type: integer }
         waiting: { type: integer, description: Items not analysed yet. }
         oldest_waiting_deleted_on: { type: [string, "null"], description: The day the oldest waiting item will be deleted. }
-        no_digest_reason: { type: [string, "null"], enum: [not_yet_time, nothing_analysed, no_assistant, waiting_for_assistant, null] }
+        no_digest_reason:
+          type: [string, "null"]
+          enum: [not_yet_time, nothing_analysed, no_assistant, waiting_for_assistant, gave_up, null]
+          description: >
+            Why there is no daily digest for today yet. `gave_up`: the core's own assistant asked the model for today's
+            digest the most it is allowed (or spent the digest's paid answers) and had no usable digest; there will be
+            none for this day, and it is said only on this day (techspec §11). The text is `x-shared-rules.digest_gave_up`.
+            A client that does not know a value shows its own general sentence for a day without a digest.
 
     Calendar:
       type: object
@@ -2330,7 +2341,7 @@ components:
       properties:
         kind: { const: analysis }
         item_id: { type: string }
-        unavailable: { type: boolean, description: "True when the content could not be fetched or could not be read. Then no points and no verdict; `summary` may say which." }
+        unavailable: { type: boolean, description: "True when the content could not be fetched or could not be read. Then no points and no verdict; `summary` may say which. The core's own assistant hands this in with `x-shared-rules.analysis_failed` as the summary when it gave no analysis in the tries it is allowed (techspec §11); that is not a statement about the content." }
         summary: { type: string, maxLength: 160, description: "One sentence. Aim for 60 Chinese characters or 25 English words; the limit is the hard stop." }
         key_fact: { type: string, maxLength: 200, description: One line that depends on the kind of content. }
         points: { type: array, maxItems: 3, items: { type: string, maxLength: 300, description: One sentence each. } }

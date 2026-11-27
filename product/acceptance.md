@@ -24,7 +24,7 @@
 | P3 | 桌面浏览器 | Chrome 系一种，可加载未打包的扩展 | Chrome、Edge、Brave 在 |
 | P4 | 构建工具 | Node、wrangler、Xcode | Node 22、wrangler 4、Xcode 27.2，签名身份 3 个 |
 | P5 | Cloudflare | 能建 Workers、D1、R2、定时任务 | 凭据可用；不能改 DNS 记录和重定向规则 |
-| P6 | 模型 | 内置助手调得通；两个活分开配：初筛（分派助手）用 claude-haiku-5-5 / low，解读和每日摘要（工作助手）用 claude-sonnet-5-5 / medium | haiku-5-5：2026-11-24 实测一次调用成功（初筛仍是 haiku-5-5 / low，不变）。sonnet-5-5 / medium：**未验收**。2026-11-27 发生了未经 Cheney 有效授权的真实网关调用（可识别的至少 20 次，实际可能更多），依据是 KE Project 无权作出的自批；现存结果（internal-qa #99 评论 7217609367）未经独立核验，不作为验收或上线依据。此前这一格写的「实测通过」撤回，更正经过见 internal-qa #99。上线后的真实延迟和用量另看 |
+| P6 | 模型 | 内置助手调得通；两个活分开配：初筛（分派助手）用 claude-haiku-5-5 / low，解读和每日摘要（工作助手）用 claude-sonnet-5-5 / medium | haiku-5-5：2026-11-24 实测一次调用成功（初筛仍是 haiku-5-5 / low，不变）。sonnet-5-5 / medium：**未验收**。2026-11-27 发生了未经 Cheney 有效授权的真实网关调用（可识别的至少 20 次，实际可能更多），依据是 KE Project 无权作出的自批；现存结果（internal-qa #99 评论 7217609367）未经独立核验，不作为验收或上线依据。此前这一格写的「实测通过」撤回，[更正经过](correction-99-gateway-calls.md)见 internal-qa #99。上线后的真实延迟和用量另看 |
 
 ## 2 契约（spec/contract）
 

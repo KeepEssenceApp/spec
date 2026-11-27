@@ -1,0 +1,9 @@
+# Only the D1 binding is read (by wrangler's getPlatformProxy); there is no Worker here.
+# The database is Miniflare's local, in-memory D1. Nothing in this folder talks to Cloudflare.
+name = "ke109-check"
+main = "x.js"
+compatibility_date = "2026-08-01"
+[[d1_databases]]
+binding = "DB"
+database_name = "ke109-check"
+database_id = "00000000-0000-0000-0000-000000000000"

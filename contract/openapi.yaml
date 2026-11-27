@@ -123,6 +123,10 @@ x-shared-rules:
     good_to_know: { zh: "知道就行", en: "Good to know" }
     skippable: { zh: "可以略过", en: "Skippable" }
   content_unavailable: { zh: "没取到内容", en: "Content could not be fetched" }
+  # The core's own model did not give an analysis, or write a day's digest, in the tries it is allowed (techspec §11).
+  # Not the same as `content_unavailable`: there the content was not fetched; here it was, and the model gave nothing.
+  analysis_failed: { zh: "没解读出来", en: "Could not be analyzed" }
+  digest_gave_up: { zh: "今天没生成出来", en: "Today's daily digest could not be written" }
   video:
     description: >
       What an item says about its video, which is read apart from the item's text (`video_state`). The core
@@ -507,6 +511,7 @@ paths:
           description: "`today`: saved and not yet in a daily digest. `digested`: already in one. `pinned`: kept without expiry."
         - { $ref: "#/components/parameters/Cursor" }
         - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Items
@@ -529,6 +534,7 @@ paths:
       parameters:
         - { name: q, in: query, required: true, schema: { type: string, minLength: 1, maxLength: 100 } }
         - { $ref: "#/components/parameters/Limit" }
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Matches
@@ -548,6 +554,8 @@ paths:
       operationId: getItem
       summary: One item with its body, analysis and tags.
       x-tier: read
+      parameters:
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       responses:
         "200":
           description: Item
@@ -564,6 +572,8 @@ paths:
         saving. On a pinned item it also unpins. Any change here marks both values as set by
         the user: triage does not change them afterwards.
       x-tier: manage
+      parameters:
+        - { $ref: "#/components/parameters/UnavailableReasons" }
       requestBody:
         required: true
         content:
@@ -895,6 +905,18 @@ paths:
       operationId: getStatus
       summary: What the status bar shows.
       x-tier: read
+      parameters:
+        - name: digest_reasons
+          in: query
+          required: false
+          schema: { type: string, maxLength: 200, example: gave_up }
+          description: >
+            The `no_digest_reason` values newer than the original four (`not_yet_time`, `nothing_analysed`,
+            `no_assistant`, `waiting_for_assistant`) that this client knows and shows, comma-separated. Today the
+            only one is `gave_up`. The core gives `gave_up` only to a client that lists it here; a client that does
+            not gets `no_digest_reason: null` on that day. Names the core does not know are ignored, not an error, so a
+            newer client may list more than an older core knows. A client that omits it is answered as before
+            (techspec §11).
       responses:
         "200":
           description: Status
@@ -1721,6 +1743,19 @@ components:
       name: limit
       in: query
       schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    UnavailableReasons:
+      name: unavailable_reasons
+      in: query
+      required: false
+      schema: { type: string, maxLength: 200, example: analysis_failed }
+      description: >
+        The reasons for `unavailable: true` in an analysis that are newer than the first one (the content could not be
+        fetched) and that this client tells apart by `summary` and shows as such, comma-separated. Today the only one is
+        `analysis_failed`: the core's own assistant gave no analysis in the tries it is allowed (techspec §11). The core
+        hands that analysis as `unavailable: true` with `x-shared-rules.analysis_failed` as `summary` only to a client
+        that lists `analysis_failed` here. What a client that does not list it gets is not decided yet (techspec §11).
+        Names the core does not know are ignored, not an error. A client that omits it is answered as before. Meant for
+        the user's own devices; the assistant interface and the export always say what the core recorded.
 
   responses:
     Error:
@@ -1828,7 +1863,7 @@ components:
       type: object
       required: [unavailable, assistant]
       properties:
-        unavailable: { type: boolean, description: True when the content could not be fetched. Then only `summary` is present. }
+        unavailable: { type: boolean, description: "True when the content could not be fetched, or when the core's own assistant gave no analysis in the tries it is allowed (`summary` says which: `x-shared-rules.content_unavailable` or `analysis_failed`). Then only `summary` is present. The second reason is handed only to a client that lists `analysis_failed` in `unavailable_reasons` (techspec §11); a client must tell the two apart by `summary`, never show `unavailable: true` as one fixed sentence." }
         summary: { type: string }
         key_fact: { type: string }
         points: { type: array, maxItems: 3, items: { type: string } }
@@ -2012,7 +2047,16 @@ components:
         saved_today: { type: integer }
         waiting: { type: integer, description: Items not analysed yet. }
         oldest_waiting_deleted_on: { type: [string, "null"], description: The day the oldest waiting item will be deleted. }
-        no_digest_reason: { type: [string, "null"], enum: [not_yet_time, nothing_analysed, no_assistant, waiting_for_assistant, null] }
+        no_digest_reason:
+          type: [string, "null"]
+          enum: [not_yet_time, nothing_analysed, no_assistant, waiting_for_assistant, gave_up, null]
+          description: >
+            Why there is no daily digest for today yet. `gave_up`: the core's own assistant asked the model for today's
+            digest the most it is allowed (or spent the digest's paid answers) and had no usable digest; there will be
+            none for this day, and it is said only on this day (techspec §11). The text is `x-shared-rules.digest_gave_up`.
+            The core gives `gave_up` only to a client that listed it in `digest_reasons` on `GET /v1/status`; on that day
+            any other client gets null. A client must not fail on a value it does not know, and should show its general
+            sentence for a day without a digest.
 
     Calendar:
       type: object
@@ -2330,7 +2374,7 @@ components:
       properties:
         kind: { const: analysis }
         item_id: { type: string }
-        unavailable: { type: boolean, description: "True when the content could not be fetched or could not be read. Then no points and no verdict; `summary` may say which." }
+        unavailable: { type: boolean, description: "True when the content could not be fetched or could not be read. Then no points and no verdict; `summary` may say which. The core's own assistant hands this in with `x-shared-rules.analysis_failed` as the summary when it gave no analysis in the tries it is allowed (techspec §11); that is not a statement about the content." }
         summary: { type: string, maxLength: 160, description: "One sentence. Aim for 60 Chinese characters or 25 English words; the limit is the hard stop." }
         key_fact: { type: string, maxLength: 200, description: One line that depends on the kind of content. }
         points: { type: array, maxItems: 3, items: { type: string, maxLength: 300, description: One sentence each. } }

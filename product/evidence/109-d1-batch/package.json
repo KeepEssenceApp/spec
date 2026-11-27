@@ -1,0 +1,12 @@
+{
+  "name": "ke109-d1-batch-check",
+  "private": true,
+  "type": "module",
+  "description": "Local check for spec#7 (#109): what a D1 batch does and does not guarantee. Not a product, not part of any release.",
+  "scripts": {
+    "check": "node check.mjs"
+  },
+  "dependencies": {
+    "wrangler": "4.167.0"
+  }
+}

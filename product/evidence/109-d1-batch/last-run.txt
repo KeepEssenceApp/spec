@@ -1,0 +1,32 @@
+# spec#7 (#109) D1 batch check
+# run at (UTC): 2026-11-27T11:20:03.741Z
+# wrangler 4.167.0, node v24.14.1
+# carrier: Miniflare local D1 (workerd + SQLite) through getPlatformProxy, persist=false. NOT a remote D1.
+T1 per-statement meta.changes => [0,1]  [OK]
+T1 usage rows after a fenced-out UPDATE + plain INSERT (1 = the batch did not stop the INSERT) => 1  [OK]
+T2 changes() variant, row not in_progress: usage rows => 0  [OK]
+T2 changes() variant, row in_progress: usage rows => 1  [OK]
+T3 first write meta.changes => [1,1]  [OK]
+T3 second write meta.changes => [0,0]  [OK]
+T3 usage rows after the same result written twice => 1  [OK]
+#   T3 the error the plain duplicate INSERT raised: "D1_ERROR: UNIQUE constraint failed: usage_records.request_id: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_UNIQUE)"
+T3 plain INSERT of a duplicate request_id inside a batch raises "UNIQUE constraint failed: usage_records.request_id" => true  [OK]
+T3 usage rows after the refused duplicate (still 1) => 1  [OK]
+T4 batch with a failing 2nd statement raises "UNIQUE constraint failed: usage_records.request_id" => true  [OK]
+T4 ledger state after the failed batch (in_progress = the UPDATE was rolled back) => "in_progress"  [OK]
+T5a too early, unconditioned recycle: changes => [0,2]  [OK]
+T5a rows recycled although no new attempt started (2 = the wrong result) => 2  [OK]
+T5b too early, conditioned recycle: changes => [0,0]  [OK]
+T5b rows recycled (0 expected) => 0  [OK]
+T5c due: changes => [1,2]  [OK]
+T5c rows recycled (2 expected) => 2  [OK]
+T6 winners among 20 concurrent takers (meta.changes of the 1st statement = 1) => 1  [OK]
+T6 final started => 2  [OK]
+T7 placeholders granted out of 30 (cap per attempt 3) => 3  [OK]
+T8 final states over 100 rounds per case => {"usage result-dispatched-first => with_usage|tokens=1|budget=1":100,"usage recycle-dispatched-first => with_usage|tokens=1|budget=1":100,"nousage result-dispatched-first => no_usage|tokens=0|budget=0":100,"nousage recycle-dispatched-first => recycled|tokens=0|budget=1":100}  [OK]
+T9 late usage written twice: state / token rows => ["with_usage",1]  [OK]
+T9 late no-usage: meta.changes / state => [0,"recycled"]  [OK]
+T10 EXISTS variant, both dispatch orders over 100 rounds => {"exists-variant result-first => with_usage|tokens=1|budget=1":100,"exists-variant recycle-first => with_usage|tokens=1|budget=1":100}  [OK]
+T10 conflicting second write after a no_usage settle: state / token rows => ["no_usage",0]  [OK]
+T11 old rows without an id stay; a duplicate request_id is ignored: rows / dup meta.changes => [4,0]  [OK]
+# 26 checks, 0 mismatches

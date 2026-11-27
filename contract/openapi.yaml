@@ -899,6 +899,18 @@ paths:
       operationId: getStatus
       summary: What the status bar shows.
       x-tier: read
+      parameters:
+        - name: digest_reasons
+          in: query
+          required: false
+          schema: { type: string, maxLength: 200, example: gave_up }
+          description: >
+            The `no_digest_reason` values newer than the original four (`not_yet_time`, `nothing_analysed`,
+            `no_assistant`, `waiting_for_assistant`) that this client knows and shows, comma-separated. Today the
+            only one is `gave_up`. The core gives `gave_up` only to a client that lists it here; a client that does
+            not gets `no_digest_reason: null` on that day. Names the core does not know are ignored, not an error, so a
+            newer client may list more than an older core knows. A client that omits it is answered as before
+            (techspec §11).
       responses:
         "200":
           description: Status
@@ -2023,8 +2035,9 @@ components:
             Why there is no daily digest for today yet. `gave_up`: the core's own assistant asked the model for today's
             digest the most it is allowed (or spent the digest's paid answers) and had no usable digest; there will be
             none for this day, and it is said only on this day (techspec §11). The text is `x-shared-rules.digest_gave_up`.
-            The core gives this value only after the clients that show the reason know it (techspec §11): a client must not
-            fail on a value it does not know, and should show its general sentence for a day without a digest.
+            The core gives `gave_up` only to a client that listed it in `digest_reasons` on `GET /v1/status`; on that day
+            any other client gets null. A client must not fail on a value it does not know, and should show its general
+            sentence for a day without a digest.
 
     Calendar:
       type: object

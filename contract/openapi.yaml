@@ -125,7 +125,7 @@ x-shared-rules:
   content_unavailable: { zh: "没取到内容", en: "Content could not be fetched" }
   # The core's own model did not give an analysis, or write a day's digest, in the tries it is allowed (techspec §11).
   # Not the same as `content_unavailable`: there the content was not fetched; here it was, and the model gave nothing.
-  analysis_failed: { zh: "没解读出来", en: "Could not be analysed" }
+  analysis_failed: { zh: "没解读出来", en: "Could not be analyzed" }
   digest_gave_up: { zh: "今天没生成出来", en: "Today's daily digest could not be written" }
   video:
     description: >

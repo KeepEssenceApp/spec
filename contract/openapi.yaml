@@ -2023,7 +2023,8 @@ components:
             Why there is no daily digest for today yet. `gave_up`: the core's own assistant asked the model for today's
             digest the most it is allowed (or spent the digest's paid answers) and had no usable digest; there will be
             none for this day, and it is said only on this day (techspec §11). The text is `x-shared-rules.digest_gave_up`.
-            A client that does not know a value shows its own general sentence for a day without a digest.
+            The core gives this value only after the clients that show the reason know it (techspec §11): a client must not
+            fail on a value it does not know, and should show its general sentence for a day without a digest.
 
     Calendar:
       type: object
